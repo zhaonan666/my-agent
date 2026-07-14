@@ -1,27 +1,20 @@
 "use client";
-import { Input, Button } from "antd";
-import { useState } from "react";
 
-import { PlusOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import InputContainer from "./_componets/InputContainer";
+import LeftBar from "./_componets/LeftBar";
+import MessageContainer from "./_componets/MessageContainer";
 
 export default function Home() {
-  const [messages, setMessages] = useState([
-    { role: "ai", content: "你好" },
-    { role: "human", content: "你是什么模型?" },
-  ]);
-
+  const [messages, setMessages] = useState([]);
   return (
-    <div>
-      <div>
-        {messages.map((item, index) => {
-          return <div>{item.content}</div>;
-        })}
-      </div>
+    <div className="flex w-screen h-screen">
+      <LeftBar />
+      <div className="h-full w-full">
+        <div className="w-3/4 h-full mx-auto flex flex-col justify-between">
+          <MessageContainer messages={messages} />
 
-      <div className="flex flex-col">
-        <Input placeholder="要求后续变更" variant="borderless" />
-        <div>
-          <PlusOutlined />
+          <InputContainer setMessages={setMessages} />
         </div>
       </div>
     </div>
