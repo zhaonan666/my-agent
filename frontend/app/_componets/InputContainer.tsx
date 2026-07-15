@@ -8,6 +8,7 @@ import {
   ArrowUpOutlined,
 } from "@ant-design/icons";
 import { Message } from "./_types/chat";
+import { streamChat } from "../service/stream-chat";
 
 const InputContainer = ({
   setMessages,
@@ -25,19 +26,25 @@ const InputContainer = ({
     ]);
     setInputValue("");
 
-    const answer =
-      (await request.post("/chat", {
-        message: inputValue,
-      })) || {};
-
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { role: "ai", content: answer || "抱歉，我没有理解您的问题。" },
-    ]);
+    await streamChat(inputValue, "1", (content) => {
+      setMessages((prevMessages) => {
+        const lastMessage = prevMessages[prevMessages.length - 1];
+        if (lastMessage.role === "ai") {
+          // 如果最后一条消息是 ai 的，直接更新它的内容
+          return [
+            ...prevMessages.slice(0, -1),
+            { ...lastMessage, content: lastMessage.content + content },
+          ];
+        } else {
+          // 否则，添加一条新的 agent 消息
+          return [...prevMessages, { role: "ai", content }];
+        }
+      });
+    });
   };
 
   return (
-    <div className="flex items-center border-1 rounded-xl gap-2  border-gray-300 p-2">
+    <div className="mb-5 flex shrink-0 items-center gap-2 rounded-xl border border-gray-300 bg-white p-2">
       <Button icon={<PlusOutlined />} type="text" />
       <Input
         placeholder="问问 Agent"

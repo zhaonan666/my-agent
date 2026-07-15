@@ -13,26 +13,25 @@ const MessageContainer = ({ messages = [] }: { messages?: Message[] }) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-4">
       {messages.map((item, index) => {
         return (
-          <div key={index}>
+          <div
+            className={`flex ${item.role === "ai" ? "justify-start" : "justify-end"} mb-2 items-center`}
+            key={index}
+          >
             <div
-              className={`flex ${item.role === "ai" ? "justify-start" : "justify-end"} mb-2 items-center`}
+                className={`flex min-w-0 ${item.role === "ai" ? "flex-row" : "flex-row-reverse"} items-start`}
             >
               <div
-                className={`flex ${item.role === "ai" ? "flex-row" : "flex-row-reverse"} items-center`}
+                className={`mx-2 ${item.role === "ai" ? "text-gray-500" : "text-blue-500"} border rounded-full px-2 py-1 text-sm font-semibold`}
               >
-                <div
-                  className={`mx-2 ${item.role === "ai" ? "text-gray-500" : "text-blue-500"} border rounded-full px-2 py-1 text-sm font-semibold`}
-                >
-                  {item.role === "ai" ? "AI" : "你"}
-                </div>
-                <div
-                  className={`p-2 rounded-lg ${item.role === "ai" ? "bg-gray-200" : "bg-blue-500 text-white"}`}
-                >
-                  {item.content}
-                </div>
+                {item.role === "ai" ? "AI" : "你"}
+              </div>
+              <div
+                  className={`min-w-0 max-w-[80%] whitespace-pre-wrap break-words p-2 rounded-lg ${item.role === "ai" ? "bg-gray-200" : "bg-blue-500 text-white"}`}
+              >
+                {item.content}
               </div>
             </div>
           </div>
