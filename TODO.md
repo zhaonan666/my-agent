@@ -34,13 +34,13 @@
 - [x] 使用 SSE 实现回答文本流式传输。
 - [x] 前端能够解析 SSE 并逐步追加 token。
 
-## 当前里程碑：M2 聊天基础体验
+## 后续体验优化：M2 聊天基础体验（暂缓）
 
 > 当前阶段先把聊天过程做完整：能发送、能等待、能显示状态、能处理失败。完成后再开始数据库持久化。
 
 ### 2.1 消息状态与 Loading
 
-- [>] 为消息增加稳定的 `id` 和 `status` 字段。
+- [ ] 为消息增加稳定的 `id` 和 `status` 字段。
 - [ ] 定义消息状态：`sending`、`streaming`、`completed`、`error`。
 - [ ] 用户发送后立即插入一条空的 AI 消息占位。
 - [ ] 首个 token 到达前显示“Agent 正在思考…”或 Loading 动画。
@@ -85,18 +85,37 @@
 
 ## M3：会话持久化与侧边栏
 
+> 当前里程碑：先学习 PostgreSQL 与 SQLAlchemy，再分别持久化业务会话数据和 LangGraph Agent 状态。
+
+### 3.0 PostgreSQL 与 SQLAlchemy 基础
+
+- [>] 学习表、行、列、主键、外键、唯一约束、索引和事务。
+- [ ] 使用 Docker Compose 启动本地 PostgreSQL。
+- [ ] 理解数据库、用户、密码、端口和连接 URL。
+- [ ] 使用数据库客户端连接 PostgreSQL。
+- [ ] 手工练习 `SELECT`、`INSERT`、`UPDATE`、`DELETE`。
+- [ ] 学习 SQLAlchemy 2.x 的 `DeclarativeBase`、`Mapped` 和 `mapped_column`。
+- [ ] 学习 `create_async_engine`、`async_sessionmaker` 和 `AsyncSession`。
+- [ ] 学习 SQLAlchemy 的 `select`、`commit`、`rollback` 和 `refresh`。
+- [ ] 学习 FastAPI 依赖注入，为每个请求提供独立 Session。
+- [ ] 学习 Alembic migration：创建、升级和回滚数据库结构。
+
 ### 3.1 Agent 状态持久化
 
-- [ ] 安装 `langgraph-checkpoint-sqlite`。
-- [ ] 使用 `AsyncSqliteSaver` 替换 `InMemorySaver`。
-- [ ] 使用 FastAPI lifespan 打开和关闭数据库连接。
+- [ ] 安装 `langgraph-checkpoint-postgres`。
+- [ ] 使用 `AsyncPostgresSaver` 替换 `InMemorySaver`。
+- [ ] 首次连接时执行 checkpointer `setup()` 创建 LangGraph 表。
+- [ ] 使用 FastAPI lifespan 打开和关闭 checkpointer。
 - [ ] 将 Agent 创建改为接收 checkpointer 的工厂函数。
 - [ ] 后端重启后，相同 `thread_id` 仍能恢复上下文。
 - [ ] 不同 `thread_id` 的上下文保持隔离。
+- [ ] 不使用 SQLAlchemy 读写 LangGraph 自己的 checkpoint 表。
 
 ### 3.2 会话元数据
 
+- [ ] 使用 SQLAlchemy 定义业务表，不与 LangGraph checkpoint 表混用。
 - [ ] 定义会话数据：`id`、`title`、`created_at`、`updated_at`。
+- [ ] 使用 Alembic 创建 threads 表迁移。
 - [ ] 实现创建会话接口。
 - [ ] 实现会话列表接口。
 - [ ] 实现重命名会话接口。
@@ -255,7 +274,7 @@
 Loading 与消息状态
 → 输入体验和错误处理
 → 工具活动展示
-→ SQLite 会话持久化
+→ PostgreSQL 会话持久化
 → 会话侧边栏
 → 文件输入
 → 语音输入
@@ -270,7 +289,7 @@ Loading 与消息状态
 
 ### 当前进行中
 
-- M2.1：消息状态与 Loading。
+- M3.0：学习 PostgreSQL、SQL 基础和 SQLAlchemy 2.x 异步 ORM。
 
 ### 已掌握
 
@@ -292,4 +311,3 @@ Loading 与消息状态
 ### 待补充
 
 - 每完成一个里程碑，在这里记录最难的问题与自己的理解。
-

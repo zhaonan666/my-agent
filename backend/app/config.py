@@ -15,6 +15,10 @@ class Settings(BaseSettings):
         validation_alias="DASHSCOPE_MODEL",
     )
 
+    database_url: SecretStr = Field(
+        validation_alias="DATABASE_URL",
+    )
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
